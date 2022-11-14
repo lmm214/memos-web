@@ -1,8 +1,3 @@
-/**
- * open_action: 打开这个页面执行的操作
- * open_text：打开这页面需要复原的输入框的内容
- */
-
 var apiUrl = localStorage.getItem('apiUrl') || ''
 var memoLock = localStorage.getItem('memoLock') || ''
 
@@ -92,7 +87,7 @@ function uploadImage(data) {
   })
   //根据data判断是图片地址还是base64加密的数据
     const formData = new FormData()
-    if (apiUrl) {
+    if (localStorage.getItem('apiUrl')) {
       formData.append('file', data)
       $.ajax({
         url: apiUrl.replace(/api\/memo/,'api/resource'),
@@ -138,7 +133,7 @@ $('#saveKey').click(function () {
 })
 
 $('#tags').click(function () {
-  if (apiUrl) {
+  if (localStorage.getItem('apiUrl')) {
       var tagUrl = apiUrl.replace(/api\/memo/,'api/tag')
       var tagDom = ""
       $.get(tagUrl,function(data,status){
@@ -188,14 +183,18 @@ $('#newtodo').click(function () {
 })
 
 $('#upres').click(async function () {
-  var file = null
-  const arrFileHandle = await window.showOpenFilePicker({multiple:false});
-  console.log(arrFileHandle)
-  for (const fileHandle of arrFileHandle) {
-      file = await fileHandle.getFile();
-  }
-  uploadImage(file)
+  $('#inFile').click()
 })
+
+$('#inFile').on('change', function(data){
+  var fileVal = $('#inFile').val();
+  var file = null
+  if(fileVal == '') {
+    return;
+  }
+  file= this.files[0];
+  uploadImage(file)
+});
 
 function add(str) {
   var tc = document.getElementById("content");
